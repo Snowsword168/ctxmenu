@@ -1,0 +1,25 @@
+[package]
+name = "ctxmenu"
+version = "0.1.0"
+edition = "2021"
+description = "Windows 10 右键菜单管理器"
+
+[dependencies]
+eframe = "0.31"
+egui_extras = "0.31"
+winreg = "0.52"
+chrono = "0.4"
+
+[features]
+# 嵌入 requireAdministrator 清单；跑 cargo test 时用 --no-default-features 关闭
+default = ["elevated"]
+elevated = []
+
+[build-dependencies]
+embed-manifest = "1.4"
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true
+panic = "abort"

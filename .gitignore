@@ -1,0 +1,15 @@
+# 构建产物
+/target
+
+# 程序运行时在 exe 旁生成的文件（本地调试时可能出现在仓库里）
+ctxmenu.ini
+ctxmenu_backups/
+
+# 编辑器 / IDE
+.vscode/
+.idea/
+*.swp
+
+# Windows
+Thumbs.db
+desktop.ini

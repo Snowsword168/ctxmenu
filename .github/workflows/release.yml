@@ -1,0 +1,44 @@
+# 推送 v* 标签时自动构建 Windows exe 并发布到 GitHub Release。
+# 用法：
+#   git tag v0.1.0
+#   git push origin v0.1.0
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write # 创建 Release 需要写权限
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      # 测试需关闭 elevated feature，否则测试进程带 requireAdministrator 清单无法启动
+      - name: Run tests
+        run: cargo test --release --no-default-features
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Rename artifact
+        shell: pwsh
+        run: |
+          Copy-Item target/release/ctxmenu.exe "ctxmenu-${{ github.ref_name }}-windows-x64.exe"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ctxmenu-${{ github.ref_name }}-windows-x64.exe
+          generate_release_notes: true
